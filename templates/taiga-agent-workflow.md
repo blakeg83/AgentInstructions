@@ -1,13 +1,14 @@
 # Taiga MCP: Agent Ticketing and Delivery Guide
 
 **Project:** {{PROJECT_NAME}}  
-**Taiga project slug:** `{{TAIGA_PROJECT}}`
+**Taiga project slug:** `{{TAIGA_PROJECT}}`  
+**Taiga internal project ID:** `{{TAIGA_PROJECT_ID}}`
 
 Taiga owns work items, scope, estimates, dependencies, and workflow statuses. GitHub owns code, branches, PRs, test evidence, and durable technical documentation. AGENTS.md owns engineering standards. Follow the user's current request and local project rules.
 
 ## Before calling Taiga
 - Use the configured MCP connection and inspect the tools' actual schemas. Never invent endpoints, credentials, IDs, permissions, or successful calls.
-- Resolve the project slug with resolve_project or list_projects. Identify the user with get_current_user when needed and use list_project_members before assignment (assignee is user ID, not membership ID).
+- Use the configured internal project ID `{{TAIGA_PROJECT_ID}}` directly for tools that accept a project ID, and slug `{{TAIGA_PROJECT}}` for tools requiring a slug. Do not call list_projects or resolve_project on every operation. If the stored ID is rejected or the project configuration changes, re-resolve the exact slug and update this document after verification. Identify the user with get_current_user when needed and use list_project_members before assignment (assignee is user ID, not membership ID).
 - Ticket references like #123 are project-local, **not** internal IDs. Resolve them with resolve_work_item and fetch the full item before changes.
 - Fetch fresh item versions before versioned writes; discover project-specific statuses, priorities, severities, roles, and point options rather than guessing IDs.
 - Follow pagination, including closed/archived work when checking duplicates or history. Some list endpoints require includePageInfo=true.

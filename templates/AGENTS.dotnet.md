@@ -1,0 +1,12 @@
+## .NET implementation standards
+- Follow .editorconfig and local conventions; otherwise use four-space indentation, PascalCase for public types/members, camelCase for locals, and _camelCase for private fields.
+- Use straightforward C# control flow and guard clauses. Validate inputs and enforce invariants at the correct boundary; do not swallow unexpected exceptions.
+- Use async for I/O, Async suffixes, and propagate cancellation where appropriate. Do not make pure calculations async.
+- Use ILogger<T> for actionable diagnostics; never log secrets. Respect nullable reference types.
+- Use TimeProvider or an existing abstraction when time-dependent behavior needs deterministic tests.
+- Add meaningful XML documentation for new or materially changed public/protected APIs, avoiding redundant comments.
+- When EF Core is used, keep persistence out of domain logic, respect DbContext lifetimes, avoid N+1 queries, and generate migrations using project tooling. EF Core/SQLite are familiar options, not requirements.
+- Blazor: reuse existing shared components and conventions; use code-behind for substantial behavior when appropriate.
+- MAUI/MVVM: keep ViewModels testable and platform-specific behavior behind existing adapters when practical.
+- Test changed domain logic, application services, persistence behavior, and nontrivial ViewModels using the existing test stack. Prefer behavior assertions and realistic persistence tests; do not add meaningless coverage.
+- Validate with repository-appropriate dotnet restore/build/test commands. On WSL/Linux do not claim Windows/MAUI runtime validation if it was not performed.

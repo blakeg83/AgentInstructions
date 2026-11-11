@@ -7,18 +7,18 @@ Reusable, locally generated coding-agent instructions based on the engineering a
 Clone this repository, then run the initializer against a project directory:
 
 ```powershell
-pwsh ./scripts/Initialize-Project.ps1 -TargetPath ../MyApp -ProjectName MyApp -ProjectType dotnet -TaigaProject myapp
+pwsh ./scripts/Initialize-Project.ps1 -TargetPath ../MyApp -ProjectName MyApp -ProjectType dotnet -TaigaProject myapp -TaigaProjectId 42
 ```
 
 Or on Linux/macOS/WSL:
 
 ```bash
-bash ./scripts/initialize-project.sh ../MyApp MyApp dotnet myapp
+bash ./scripts/initialize-project.sh ../MyApp MyApp dotnet myapp 42
 ```
 
-Supported project types: `dotnet` and `generic`. Omit the Taiga slug (or use `-` with Bash) to skip Taiga integration.
+Supported project types: `dotnet` and `generic`. Omit the Taiga slug (or use `-` with Bash) to skip Taiga integration. When enabling Taiga, supply its **verified numeric project ID**. Resolve the slug once using Taiga MCP `resolve_project` during project setup, then pass the returned ID to the initializer. The shell scripts do not access MCP or store credentials. `42` above is an example, not a real project mapping.
 
-The initializer generates **local, editable** `AGENTS.md` and, when configured, `docs/taiga-agent-workflow.md`. The .NET profile adds engineering guidance to the common instructions. Templates are copied, not linked; generated projects have no runtime dependency on this repository.
+The initializer generates **local, editable** `AGENTS.md` and, when configured, `docs/taiga-agent-workflow.md` with the project slug and ID. The .NET profile adds engineering guidance to the common instructions. Templates are copied, not linked; generated projects have no runtime dependency on this repository.
 
 **Safety:** Existing output files are never overwritten. Initialize a new project or manually merge desired changes. Commit generated files in the destination repository after review.
 

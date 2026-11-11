@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-if [[ $# -lt 2 ]]; then echo "Usage: $0 TARGET_DIR PROJECT_NAME [dotnet|generic] [TAIGA_SLUG|-]" >&2; exit 2; fi
-target=$1; name=$2; type=${3:-dotnet}; taiga=${4:-}
+if [[ $# -lt 2 ]]; then echo "Usage: $0 TARGET_DIR PROJECT_NAME [dotnet|generic] [TAIGA_SLUG|-] [TAIGA_PROJECT_ID]" >&2; exit 2; fi
+target=$1; name=$2; type=${3:-dotnet}; taiga=${4:-}; taiga_id=${5:-}
 [[ "$type" == dotnet || "$type" == generic ]] || { echo "Invalid project type" >&2; exit 2; }
 [[ -d "$target" ]] || { echo "Target directory does not exist" >&2; exit 1; }
+if [[ -n "$taiga" && "$taiga" != "-" ]]; then
+  [[ "$taiga_id" =~ ^[1-9][0-9]*$ ]] || { echo "Provide a verified positive TAIGA_PROJECT_ID (resolve slug once via Taiga MCP during setup)" >&2; exit 2; }
+elif [[ -n "$taiga_id" ]]; then echo "TAIGA_PROJECT_ID requires TAIGA_SLUG" >&2; exit 2; fi
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 [[ ! -e "$target/AGENTS.md" ]] || { echo "Refusing to overwrite AGENTS.md" >&2; exit 1; }
 if [[ -n "$taiga" && "$taiga" != "-" && -e "$target/docs/taiga-agent-workflow.md" ]]; then echo "Refusing to overwrite Taiga guide" >&2; exit 1; fi
@@ -15,9 +18,9 @@ if [[ -z "$taiga" || "$taiga" == "-" ]]; then
   sed -i '/Taiga is the source of truth/d; /When Taiga is configured/d; /If a credible high-priority defect/d' "$tmp"
   taiga="not configured"
 fi
-export AI_PROJECT_NAME="$name" AI_TAIGA_SLUG="$taiga"
+export AI_PROJECT_NAME="$name" AI_TAIGA_SLUG="$taiga" AI_TAIGA_ID="${taiga_id:-not configured}"
 render() {
-  python3 -c 'import os,sys; s=sys.stdin.read(); print(s.replace("{{PROJECT_NAME}}",os.environ["AI_PROJECT_NAME"]).replace("{{TAIGA_PROJECT}}",os.environ["AI_TAIGA_SLUG"]),end="")'
+  python3 -c 'import os,sys; s=sys.stdin.read(); print(s.replace("{{PROJECT_NAME}}",os.environ["AI_PROJECT_NAME"]).replace("{{TAIGA_PROJECT}}",os.environ["AI_TAIGA_SLUG"]).replace("{{TAIGA_PROJECT_ID}}",os.environ["AI_TAIGA_ID"]),end="")'
 }
 render < "$tmp" > "$target/AGENTS.md"
 echo "Created $target/AGENTS.md"

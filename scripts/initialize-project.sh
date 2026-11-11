@@ -16,6 +16,13 @@ cat "$root/templates/AGENTS.base.md" > "$tmp"
 if [[ "$type" == dotnet ]]; then printf '\n' >> "$tmp"; cat "$root/templates/AGENTS.dotnet.md" >> "$tmp"; fi
 if [[ -z "$taiga" || "$taiga" == "-" ]]; then
   sed -i '/Taiga is the source of truth/d; /When Taiga is configured/d; /If a credible high-priority defect/d' "$tmp"
+  python3 - "$tmp" <<'PY'
+import pathlib, re, sys
+p = pathlib.Path(sys.argv[1])
+s = p.read_text()
+s = re.sub(r'\n## High-Priority Findings: Create Taiga Issues\n.*?(?=\n## Change safety)', '', s, flags=re.S)
+p.write_text(s)
+PY
   taiga="not configured"
 fi
 export AI_PROJECT_NAME="$name" AI_TAIGA_SLUG="$taiga" AI_TAIGA_ID="${taiga_id:-not configured}"

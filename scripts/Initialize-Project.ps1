@@ -24,6 +24,7 @@ if ($ProjectType -eq "dotnet") {
 }
 if (-not $hasTaiga) {
   $base = ($base -split "`n" | Where-Object { $_ -notmatch 'Taiga is the source|When Taiga is configured|high-priority defect' }) -join "`n"
+  $base = [regex]::Replace($base, "(?s)\r?\n## High-Priority Findings: Create Taiga Issues\r?\n.*?(?=\r?\n## Change safety)", "")
   $base = $base.Replace("docs/taiga-agent-workflow.md", "the configured project workflow")
 }
 foreach ($f in $files) {

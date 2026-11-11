@@ -16,3 +16,4 @@ Record deviations from the shared defaults and links to authoritative style guid
 
 ## Taiga
 Project slug: {{TAIGA_PROJECT}}
+Internal project ID: {{TAIGA_PROJECT_ID}}

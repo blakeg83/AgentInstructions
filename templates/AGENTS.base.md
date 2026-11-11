@@ -30,7 +30,21 @@ These are local project defaults. Read README.md, architecture docs, .editorconf
 - Do not silently delete old plans; migrate requirements and decisions first, repair links, and remove only when explicitly requested.
 - Do not publish backlogs or change unrelated tickets without explicit authorization.
 - When Taiga is configured, read docs/taiga-agent-workflow.md before ticket operations.
-- If a credible high-priority defect, security issue, or substantial architectural problem is discovered in the area being changed, create a Taiga issue only when a matching project is configured and the guide's evidence, duplicate-check, metadata, and verification safeguards can be met. Otherwise report it without inventing a ticket.
+
+## High-Priority Findings: Create Taiga Issues
+
+
+While working on an assigned change, **create a Taiga issue** if you discover a credible **high-priority bug, security vulnerability, or significant architectural problem** in the affected project. This is standing authorization to create that specific kind of issue, even when the user has not separately requested a ticket. It is not authorization to audit the repository, open routine cleanup tickets, or expand the implementation scope.
+
+- **Apply a high threshold.** Examples include potential data loss or corruption, security exposure, incorrect important business results, broken core workflows, and responsibility/dependency-boundary violations with substantial correctness, reliability, or maintainability impact. A large class, style violation, or minor code smell alone does not qualify.
+- **Gather concrete evidence.** Identify the affected feature and files, observed/reproducible behavior or specific architectural violation, practical impact, and why the issue is high priority. Clearly distinguish confirmed defects from suspected risks.
+- **Find the correct Taiga project.** Use the configured project slug `{{TAIGA_PROJECT}}` and verified internal project ID `{{TAIGA_PROJECT_ID}}` from `docs/taiga-agent-workflow.md` for this repository. For cross-project problems, verify the owning project through the configured Taiga MCP connection. Never guess project IDs; if ownership cannot be determined, report the finding instead of filing it arbitrarily.
+- **Check for duplicates before writing.** Use `list_issues` to search the owning project, including closed issues and all relevant result pages. If an equivalent issue exists, reference it rather than creating another.
+- **Create an actionable issue.** Discover the project's issue types, priorities, severities, and statuses using the available `list_issue_*` metadata tools. Use `create_issue` with a clear subject and description covering evidence/reproduction, expected behavior or violated architectural boundary, impact, priority rationale, and a bounded remediation or investigation goal. Use only supported, verified project-specific values; never invent IDs or exaggerate severity.
+- **Read back and report.** Verify the new issue using `get_issue`, then include its project and reference/link in the final handoff. If the MCP connection, tools, metadata, or permissions are unavailable, state what was found and why filing did not succeed. Never claim an issue was created without confirmation.
+- **Keep working within scope.** A finding does not automatically authorize a separate fix or redesign. Continue the assigned work when safe; if the problem blocks it, explain the blocker. Focused refactoring of code already being changed remains encouraged under the standards above.
+
+For authentication, ID/reference resolution, pagination, safe writes, and all other Taiga operations (planning, publication, status updates, and story workflows), read [the Taiga agent workflow guide](docs/taiga-agent-workflow.md). **Do not publish backlogs or modify unrelated tickets without separate authorization.**
 
 ## Change safety
 - Do not edit generated build artifacts manually.
